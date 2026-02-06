@@ -1,0 +1,124 @@
+services:
+  # One-shot mode - runs once and exits (ideal for cron jobs or manual triggers)
+  mnamer-oneshot:
+    build:
+      context: .
+      args:
+        USER_ID: ${PUID:-1000}
+        GROUP_ID: ${PGID:-1000}
+        # Uncomment and set to install specific version, otherwise installs latest
+        # VERSION: 2.5.5
+    image: mnamer:local
+    container_name: mnamer-oneshot
+    volumes:
+      - ${MEDIA_DIR:-./media}:/media
+      - ${CONFIG_DIR:-./config}:/config:ro
+      - ${OUTPUT_DIR:-./output}:/output
+    environment:
+      - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
+      - MNAMER_BATCH=${BATCH_MODE:-true}
+      - MNAMER_RECURSE=${RECURSE:-true}
+      - MNAMER_VERBOSE=${VERBOSE:-1}
+      - MNAMER_LANGUAGE=${LANGUAGE:-en}
+      - MNAMER_NO_OVERWRITE=${NO_OVERWRITE:-false}
+    restart: "no"
+    command: >
+      ${MNAMER_BATCH:+--batch}
+      ${MNAMER_RECURSE:+--recurse}
+      ${MNAMER_VERBOSE:+--verbose}
+      /media
+
+  # Interactive mode - for manual file processing with prompts
+  mnamer-interactive:
+    build:
+      context: .
+      args:
+        USER_ID: ${PUID:-1000}
+        GROUP_ID: ${PGID:-1000}
+      # Uncomment and set to install specific version, otherwise installs latest
+      # args:
+      #   VERSION: 2.5.5
+    image: mnamer:local
+    container_name: mnamer-interactive
+    volumes:
+      - ${MEDIA_DIR:-./media}:/media
+      - ${CONFIG_DIR:-./config}:/config
+    environment:
+      - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
+    stdin_open: true
+    tty: true
+    profiles:
+      - interactive
+    command: ["--recurse", "/media"]
+
+  # Batch mode - for automated processing without prompts
+  mnamer-batch:
+    build:
+      context: .
+      args:
+        USER_ID: ${PUID:-1000}
+        GROUP_ID: ${PGID:-1000}
+      # Uncomment and set to install specific version, otherwise installs latest
+      # args:
+      #   VERSION: 2.5.5
+    image: mnamer:local
+    container_name: mnamer-batch
+    volumes:
+      - ${MEDIA_DIR:-./media}:/media:ro
+      - ${CONFIG_DIR:-./config}:/config:ro
+      - ${OUTPUT_DIR:-./output}:/output
+    environment:
+      - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
+    profiles:
+      - batch
+    command: ["--batch", "--recurse", "/media"]
+
+  # Test mode - for dry-run testing without actual file operations
+  mnamer-test:
+    build:
+      context: .
+      args:
+        USER_ID: ${PUID:-1000}
+        GROUP_ID: ${PGID:-1000}
+      # Uncomment and set to install specific version, otherwise installs latest
+      # args:
+      #   VERSION: 2.5.5
+    image: mnamer:local
+    container_name: mnamer-test
+    volumes:
+      - ${MEDIA_DIR:-./media}:/media:ro
+      - ${CONFIG_DIR:-./config}:/config:ro
+    environment:
+      - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
+    profiles:
+      - test
+    command: ["--test", "--batch", "--recurse", "/media"]
+
+  # Watch mode - for continuous monitoring (requires custom script)
+  mnamer-watch:
+    build:
+      context: .
+      args:
+        USER_ID: ${PUID:-1000}
+        GROUP_ID: ${PGID:-1000}
+      # Uncomment and set to install specific version, otherwise installs latest
+      # args:
+      #   VERSION: 2.5.5
+    image: mnamer:local
+    container_name: mnamer-watch
+    volumes:
+      - ${MEDIA_DIR:-./media}:/media
+      - ${CONFIG_DIR:-./config}:/config
+    environment:
+      - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
+      - WATCH_INTERVAL=${WATCH_INTERVAL:-300}
+    profiles:
+      - watch
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command: 
+      - |
+        while true; do
+          python -m mnamer --batch --recurse /media
+          sleep $${WATCH_INTERVAL}
+        done

@@ -1,0 +1,29 @@
+# Docker build context exclusions
+.git
+.gitignore
+*.md
+.DS_Store
+Thumbs.db
+
+# Local test directories
+media/
+output/
+config/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Documentation
+docs/
+*.txt
+LICENSE

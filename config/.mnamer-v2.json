@@ -1,0 +1,20 @@
+{
+  "batch": false,
+  "lower": false,
+  "recurse": true,
+  "scene": false,
+  "verbose": 1,
+  "hits": 5,
+  "ignore": [],
+  "language": "en",
+  "mask": ["avi", "m4v", "mp4", "mkv", "ts", "wmv"],
+  "no_guess": false,
+  "no_overwrite": false,
+  "no_style": false,
+  "movie_api": "tmdb",
+  "movie_directory": "/output/Movies/{name} ({year})",
+  "movie_format": "{name} ({year}){extension}",
+  "episode_api": "tvmaze",
+  "episode_directory": "/output/TV Shows/{series}",
+  "episode_format": "{series} - S{season:02}E{episode:02} - {title}{extension}"
+}
