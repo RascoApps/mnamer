@@ -16,16 +16,11 @@ services:
       - ${OUTPUT_DIR:-./output}:/output
     environment:
       - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
-      - MNAMER_BATCH=${BATCH_MODE:-true}
-      - MNAMER_RECURSE=${RECURSE:-true}
-      - MNAMER_VERBOSE=${VERBOSE:-1}
-      - MNAMER_LANGUAGE=${LANGUAGE:-en}
-      - MNAMER_NO_OVERWRITE=${NO_OVERWRITE:-false}
     restart: "no"
     command: >
-      ${MNAMER_BATCH:+--batch}
-      ${MNAMER_RECURSE:+--recurse}
-      ${MNAMER_VERBOSE:+--verbose}
+      ${BATCH_MODE:+--batch}
+      ${RECURSE:+--recurse}
+      ${VERBOSE:+--verbose}
       /media
 
   # Interactive mode - for manual file processing with prompts
@@ -35,9 +30,8 @@ services:
       args:
         USER_ID: ${PUID:-1000}
         GROUP_ID: ${PGID:-1000}
-      # Uncomment and set to install specific version, otherwise installs latest
-      # args:
-      #   VERSION: 2.5.5
+        # Uncomment and set to install specific version, otherwise installs latest
+        # VERSION: 2.5.5
     image: mnamer:local
     container_name: mnamer-interactive
     volumes:
@@ -58,9 +52,8 @@ services:
       args:
         USER_ID: ${PUID:-1000}
         GROUP_ID: ${PGID:-1000}
-      # Uncomment and set to install specific version, otherwise installs latest
-      # args:
-      #   VERSION: 2.5.5
+        # Uncomment and set to install specific version, otherwise installs latest
+        # VERSION: 2.5.5
     image: mnamer:local
     container_name: mnamer-batch
     volumes:
@@ -80,9 +73,8 @@ services:
       args:
         USER_ID: ${PUID:-1000}
         GROUP_ID: ${PGID:-1000}
-      # Uncomment and set to install specific version, otherwise installs latest
-      # args:
-      #   VERSION: 2.5.5
+        # Uncomment and set to install specific version, otherwise installs latest
+        # VERSION: 2.5.5
     image: mnamer:local
     container_name: mnamer-test
     volumes:
@@ -101,9 +93,8 @@ services:
       args:
         USER_ID: ${PUID:-1000}
         GROUP_ID: ${PGID:-1000}
-      # Uncomment and set to install specific version, otherwise installs latest
-      # args:
-      #   VERSION: 2.5.5
+        # Uncomment and set to install specific version, otherwise installs latest
+        # VERSION: 2.5.5
     image: mnamer:local
     container_name: mnamer-watch
     volumes:
