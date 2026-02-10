@@ -127,6 +127,6 @@ services:
           hardlink_flag="--hardlink"
         fi
         while true; do
-          python -m mnamer --batch --recurse $${hardlink_flag:+$${hardlink_flag}} /media
+          python -m mnamer --batch --recurse $${hardlink_flag} /media
           sleep $${WATCH_INTERVAL}
         done

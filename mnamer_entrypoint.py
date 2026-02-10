@@ -31,8 +31,9 @@ def _enable_hardlink_mode() -> None:
 
 
 def main() -> None:
+    hardlink_enabled = HARDLINK_FLAG in sys.argv[1:]
     args = [arg for arg in sys.argv[1:] if arg != HARDLINK_FLAG]
-    if len(args) != len(sys.argv) - 1:
+    if hardlink_enabled:
         _enable_hardlink_mode()
     sys.argv = [sys.argv[0]] + args
     mnamer_main()
