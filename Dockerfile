@@ -34,6 +34,7 @@ ENV PYTHONUNBUFFERED=1 \
 # Copy installed packages from builder
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
+COPY mnamer_entrypoint.py /usr/local/bin/mnamer-entrypoint.py
 
 # Create non-privileged user and directories with configurable UID/GID
 RUN addgroup -g ${GROUP_ID} mediauser && \
@@ -52,5 +53,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -m mnamer --version || exit 1
 
 # Default command with batch processing
-ENTRYPOINT ["python", "-m", "mnamer"]
+ENTRYPOINT ["python", "/usr/local/bin/mnamer-entrypoint.py"]
 CMD ["--batch", "/media"]
