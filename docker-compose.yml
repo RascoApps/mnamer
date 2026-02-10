@@ -21,6 +21,7 @@ services:
       ${BATCH_MODE:+--batch}
       ${RECURSE:+--recurse}
       ${VERBOSE:+--verbose}
+      ${HARDLINK:+--hardlink}
       /media
 
   # Interactive mode - for manual file processing with prompts
@@ -43,7 +44,10 @@ services:
     tty: true
     profiles:
       - interactive
-    command: ["--recurse", "/media"]
+    command: >
+      --recurse
+      ${HARDLINK:+--hardlink}
+      /media
 
   # Batch mode - for automated processing without prompts
   mnamer-batch:
@@ -64,7 +68,11 @@ services:
       - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
     profiles:
       - batch
-    command: ["--batch", "--recurse", "/media"]
+    command: >
+      --batch
+      --recurse
+      ${HARDLINK:+--hardlink}
+      /media
 
   # Test mode - for dry-run testing without actual file operations
   mnamer-test:
@@ -84,7 +92,12 @@ services:
       - MNAMER_CONFIG_PATH=${CONFIG_PATH:-/config/.mnamer-v2.json}
     profiles:
       - test
-    command: ["--test", "--batch", "--recurse", "/media"]
+    command: >
+      --test
+      --batch
+      --recurse
+      ${HARDLINK:+--hardlink}
+      /media
 
   # Watch mode - for continuous monitoring (requires custom script)
   mnamer-watch:
@@ -110,6 +123,6 @@ services:
     command: 
       - |
         while true; do
-          python -m mnamer --batch --recurse /media
+          python -m mnamer --batch --recurse ${HARDLINK:+--hardlink} /media
           sleep $${WATCH_INTERVAL}
         done

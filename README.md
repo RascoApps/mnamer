@@ -108,6 +108,7 @@ The following environment variables can be set in a `.env` file or passed direct
 - `VERBOSE`: Verbosity level 0-2 (default: `1`)
 - `LANGUAGE`: Metadata language code (default: `en`)
 - `NO_OVERWRITE`: Prevent overwriting existing files (default: `false`)
+- `HARDLINK`: Set to any value to pass `--hardlink` to mnamer (requires source/output on same filesystem)
 
 #### Watch Mode
 - `WATCH_INTERVAL`: Seconds between processing runs (default: `300`)
