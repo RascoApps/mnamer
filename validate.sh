@@ -3,6 +3,22 @@
 
 set -e
 
+stat_inode() {
+    if stat -c %i "$1" >/dev/null 2>&1; then
+        stat -c %i "$1"
+    else
+        stat -f %i "$1"
+    fi
+}
+
+stat_links() {
+    if stat -c %h "$1" >/dev/null 2>&1; then
+        stat -c %h "$1"
+    else
+        stat -f %l "$1"
+    fi
+}
+
 echo "=== Docker Compose Solution Validation ==="
 echo ""
 
@@ -96,9 +112,9 @@ if [ ! -f "$media_file" ]; then
     exit 1
 fi
 
-output_inode=$(stat -c %i "$output_file")
-source_inode=$(stat -c %i "$media_file")
-link_count=$(stat -c %h "$media_file")
+output_inode=$(stat_inode "$output_file")
+source_inode=$(stat_inode "$media_file")
+link_count=$(stat_links "$media_file")
 
 if [ "$output_inode" -ne "$source_inode" ] || [ "$link_count" -lt 2 ]; then
     echo "   ✗ hardlink validation failed (inodes or link count mismatch)"

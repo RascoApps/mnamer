@@ -17,10 +17,13 @@ def _relocate_hardlink(target: Target) -> None:
     try:
         link(target.source, destination_path)
     except OSError as exc:
-        raise MnamerException(str(exc)) from exc
+        raise MnamerException(
+            f"failed to create hardlink from '{target.source}' to '{destination_path}': {exc}"
+        ) from exc
 
 
 def _enable_hardlink_mode() -> None:
+    """Patch mnamer to create hardlinks instead of moving files."""
     Target.relocate = _relocate_hardlink
 
 
