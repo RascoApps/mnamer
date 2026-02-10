@@ -11,7 +11,7 @@ from mnamer.target import Target
 HARDLINK_FLAG = "--hardlink"
 
 
-def _relocate_hardlink(target: Target) -> None:
+def _relocate_via_hardlink(target: Target) -> None:
     source_path = Path(target.source).resolve()
     destination_path = Path(target.destination).resolve()
     destination_path.parent.mkdir(parents=True, exist_ok=True)
@@ -27,7 +27,7 @@ def _relocate_hardlink(target: Target) -> None:
 
 def _enable_hardlink_mode() -> None:
     """Patch mnamer to create hardlinks instead of moving files."""
-    Target.relocate = _relocate_hardlink
+    Target.relocate = _relocate_via_hardlink
 
 
 def main() -> None:

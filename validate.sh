@@ -19,6 +19,17 @@ stat_links() {
     fi
 }
 
+is_number() {
+    case "$1" in
+        ""|*[!0-9]*)
+            return 1
+            ;;
+        *)
+            return 0
+            ;;
+    esac
+}
+
 echo "=== Docker Compose Solution Validation ==="
 echo ""
 
@@ -62,6 +73,7 @@ else
     exit 1
 fi
 for profile in interactive batch test watch; do
+    # oneshot is validated above since it isn't profile-based
     if HARDLINK=true docker compose --profile "$profile" config | grep -q -- "--hardlink"; then
         echo "   ✓ $profile profile includes --hardlink when enabled"
     else
@@ -116,6 +128,11 @@ fi
 output_inode=$(stat_inode "$output_file")
 source_inode=$(stat_inode "$media_file")
 link_count=$(stat_links "$media_file")
+
+if ! is_number "$output_inode" || ! is_number "$source_inode" || ! is_number "$link_count"; then
+    echo "   ✗ hardlink validation failed (invalid inode or link count)"
+    exit 1
+fi
 
 if [ "$output_inode" -ne "$source_inode" ] || [ "$link_count" -lt 2 ]; then
     echo "   ✗ hardlink validation failed (inodes or link count mismatch)"

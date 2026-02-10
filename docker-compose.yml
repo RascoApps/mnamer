@@ -122,11 +122,11 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: 
       - |
-        hardlink_flag=""
-        if [ -n "$$HARDLINK" ]; then
-          hardlink_flag="--hardlink"
-        fi
         while true; do
-          python -m mnamer --batch --recurse $${hardlink_flag} /media
+          if [ -n "$$HARDLINK" ]; then
+            python -m mnamer --batch --recurse --hardlink /media
+          else
+            python -m mnamer --batch --recurse /media
+          fi
           sleep $${WATCH_INTERVAL}
         done
