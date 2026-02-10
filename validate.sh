@@ -86,7 +86,8 @@ media_file="$media_dir/Demo.Show.S01E01.mkv"
 printf "sample media" > "$media_file"
 chmod -R 777 "$temp_dir"
 
-script_path="$(pwd)/mnamer_entrypoint.py"
+script_dir=$(cd "$(dirname "$0")" && pwd)
+script_path="$script_dir/mnamer_entrypoint.py"
 
 docker run --rm \
     -v "$temp_dir:/data" \

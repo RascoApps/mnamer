@@ -12,13 +12,16 @@ HARDLINK_FLAG = "--hardlink"
 
 
 def _relocate_hardlink(target: Target) -> None:
+    source_path = Path(target.source).resolve()
     destination_path = Path(target.destination).resolve()
     destination_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        link(target.source, destination_path)
+        if destination_path.exists():
+            destination_path.unlink()
+        link(source_path, destination_path)
     except OSError as exc:
         raise MnamerException(
-            f"failed to create hardlink from '{target.source}' to '{destination_path}': {exc}"
+            f"failed to create hardlink from '{source_path}' to '{destination_path}': {exc}"
         ) from exc
 
 
