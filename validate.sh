@@ -55,6 +55,60 @@ for profile in interactive batch test watch; do
 done
 echo ""
 
+echo "7. Running hardlink integration test..."
+temp_dir=$(mktemp -d)
+cleanup() {
+    rm -rf "$temp_dir"
+}
+trap cleanup EXIT
+
+media_dir="$temp_dir/media"
+output_dir="$temp_dir/output"
+mkdir -p "$media_dir" "$output_dir"
+
+media_file="$media_dir/Demo.Show.S01E01.mkv"
+printf "sample media" > "$media_file"
+chmod -R 777 "$temp_dir"
+
+original_inode=$(stat -c %i "$media_file")
+script_path="$(pwd)/mnamer_entrypoint.py"
+
+docker run --rm \
+    -v "$temp_dir:/data" \
+    -v "$script_path:/app/mnamer_entrypoint.py:ro" \
+    --entrypoint python \
+    jkwill87/mnamer:latest \
+    /app/mnamer_entrypoint.py \
+    --batch \
+    --hardlink \
+    --media episode \
+    --episode-directory /data/output \
+    --episode-format 'S{season:02}E{episode:02}{extension}' \
+    /data/media/Demo.Show.S01E01.mkv
+
+output_file="$output_dir/S01E01.mkv"
+if [ ! -f "$output_file" ]; then
+    echo "   ✗ hardlink output file not created"
+    exit 1
+fi
+
+if [ ! -f "$media_file" ]; then
+    echo "   ✗ source file missing after hardlink run"
+    exit 1
+fi
+
+output_inode=$(stat -c %i "$output_file")
+source_inode=$(stat -c %i "$media_file")
+link_count=$(stat -c %h "$media_file")
+
+if [ "$output_inode" -ne "$source_inode" ] || [ "$link_count" -lt 2 ] || [ "$output_inode" -ne "$original_inode" ]; then
+    echo "   ✗ hardlink validation failed (inodes or link count mismatch)"
+    exit 1
+fi
+
+echo "   ✓ hardlink creation verified via inode and link count"
+echo ""
+
 echo "=== Validation Complete ==="
 echo "All checks passed! The Docker compose solution is properly configured."
 echo ""
