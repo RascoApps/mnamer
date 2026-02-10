@@ -122,7 +122,8 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: 
       - |
+        HARDLINK_FLAG="${HARDLINK:+--hardlink}"
         while true; do
-          python -m mnamer --batch --recurse ${HARDLINK:+--hardlink} /media
+          python -m mnamer --batch --recurse $${HARDLINK_FLAG} /media
           sleep $${WATCH_INTERVAL}
         done

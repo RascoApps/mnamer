@@ -38,6 +38,23 @@ grep -q "PGID:-1000" docker-compose.yml && echo "   ✓ PGID has default value"
 grep -q "MEDIA_DIR:-./media" docker-compose.yml && echo "   ✓ MEDIA_DIR has default value"
 echo ""
 
+echo "6. Validating hardlink flag support..."
+if HARDLINK=1 docker compose config | grep -q -- "--hardlink"; then
+    echo "   ✓ oneshot service includes --hardlink when enabled"
+else
+    echo "   ✗ oneshot service missing --hardlink"
+    exit 1
+fi
+for profile in interactive batch test watch; do
+    if HARDLINK=1 docker compose --profile "$profile" config | grep -q -- "--hardlink"; then
+        echo "   ✓ $profile profile includes --hardlink when enabled"
+    else
+        echo "   ✗ $profile profile missing --hardlink"
+        exit 1
+    fi
+done
+echo ""
+
 echo "=== Validation Complete ==="
 echo "All checks passed! The Docker compose solution is properly configured."
 echo ""
