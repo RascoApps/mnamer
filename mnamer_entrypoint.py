@@ -12,6 +12,7 @@ HARDLINK_FLAG = "--hardlink"
 
 
 def _relocate_via_hardlink(target: Target) -> None:
+    """Relocate a target by creating a hardlink at the destination path."""
     source_path = Path(target.source).resolve()
     destination_path = Path(target.destination).resolve()
     destination_path.parent.mkdir(parents=True, exist_ok=True)

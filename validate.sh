@@ -73,7 +73,7 @@ else
     exit 1
 fi
 for profile in interactive batch test watch; do
-    # oneshot is validated above since it isn't profile-based
+    # oneshot is validated above since it is not profile-based
     if HARDLINK=true docker compose --profile "$profile" config | grep -q -- "--hardlink"; then
         echo "   ✓ $profile profile includes --hardlink when enabled"
     else
@@ -130,7 +130,7 @@ source_inode=$(stat_inode "$media_file")
 link_count=$(stat_links "$media_file")
 
 if ! is_number "$output_inode" || ! is_number "$source_inode" || ! is_number "$link_count"; then
-    echo "   ✗ hardlink validation failed (invalid inode or link count)"
+    echo "   ✗ hardlink validation failed: output_inode=$output_inode source_inode=$source_inode link_count=$link_count"
     exit 1
 fi
 

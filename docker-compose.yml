@@ -124,9 +124,9 @@ services:
       - |
         while true; do
           if [ -n "$$HARDLINK" ]; then
-            python -m mnamer --batch --recurse --hardlink /media
+            python /usr/local/bin/mnamer-entrypoint.py --batch --recurse --hardlink /media
           else
-            python -m mnamer --batch --recurse /media
+            python /usr/local/bin/mnamer-entrypoint.py --batch --recurse /media
           fi
           sleep $${WATCH_INTERVAL}
         done
