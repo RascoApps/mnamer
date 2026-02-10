@@ -17,14 +17,11 @@ def _relocate_hardlink(target: Target) -> None:
     try:
         link(target.source, destination_path)
     except OSError as exc:
-        raise MnamerException from exc
+        raise MnamerException(str(exc)) from exc
 
 
 def _enable_hardlink_mode() -> None:
-    def relocate(self: Target) -> None:
-        _relocate_hardlink(self)
-
-    Target.relocate = relocate
+    Target.relocate = _relocate_hardlink
 
 
 def main() -> None:

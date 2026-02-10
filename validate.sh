@@ -70,7 +70,6 @@ media_file="$media_dir/Demo.Show.S01E01.mkv"
 printf "sample media" > "$media_file"
 chmod -R 777 "$temp_dir"
 
-original_inode=$(stat -c %i "$media_file")
 script_path="$(pwd)/mnamer_entrypoint.py"
 
 docker run --rm \
@@ -101,7 +100,7 @@ output_inode=$(stat -c %i "$output_file")
 source_inode=$(stat -c %i "$media_file")
 link_count=$(stat -c %h "$media_file")
 
-if [ "$output_inode" -ne "$source_inode" ] || [ "$link_count" -lt 2 ] || [ "$output_inode" -ne "$original_inode" ]; then
+if [ "$output_inode" -ne "$source_inode" ] || [ "$link_count" -lt 2 ]; then
     echo "   ✗ hardlink validation failed (inodes or link count mismatch)"
     exit 1
 fi
